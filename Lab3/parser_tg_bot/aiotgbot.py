@@ -16,6 +16,8 @@ dp = Dispatcher(bot)
 START_BUTTON_NAME = "start"
 RUN_PARSE_BUTTON_NAME = "Run parse"
 
+GET_BUTTON_NAME = "get_by_id"
+
 SELECT_BUTTON_NAME = "Select"
 SELECT_RANGE_NAME = "select_range"
 SELECT_ALL_BUTTON_NAME = "Select all"
@@ -48,14 +50,21 @@ async def send_welcome(message: types.Message):
 
 
 # select handlers
-@dp.message_handler(commands=[SELECT_BUTTON_NAME])
-async def origin_select_btn_handler(message: types.Message):
-    result_markup = ReplyKeyboardMarkup([
-        [KeyboardButton(text=SELECT_RANGE_NAME)],
-        [KeyboardButton(text=SELECT_ALL_BUTTON_NAME)]
-    ])
+# @dp.message_handler(commands=[SELECT_BUTTON_NAME])
+# async def origin_select_btn_handler(message: types.Message):
+#     result_markup = ReplyKeyboardMarkup([
+#         [KeyboardButton(text=SELECT_RANGE_NAME)],
+#         [KeyboardButton(text=SELECT_ALL_BUTTON_NAME)]
+#     ])
+#
+#     await message.reply(text="Choose select query type", reply_markup=result_markup)
 
-    await message.reply(text="Choose select query type", reply_markup=result_markup)
+@dp.message_handler(commands=[GET_BUTTON_NAME])
+async def origin_get_btn_handler(message: types.Message):
+    m = message.text.strip()
+    m = re.sub("/" + GET_BUTTON_NAME, "", m)
+    result = CrudApi.get_by_id(int(m))
+    await message.reply(result)
 
 
 @dp.message_handler(commands=[SELECT_RANGE_NAME])
@@ -90,12 +99,12 @@ async def origin_delete_btn_handler(message: types.Message):
 
 
 @dp.message_handler(commands=[UPDATE_BUTTON_NAME])
-async def origin_updatebtn_handler(message: types.Message):
+async def origin_update_btn_handler(message: types.Message):
     pass
 
 
 @dp.message_handler(commands=[INSERT_BUTTON_NAME])
-async def origin_insertbtn_handler(message: types.Message):
+async def origin_insert_btn_handler(message: types.Message):
     pass
 
 
