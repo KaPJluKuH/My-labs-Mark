@@ -51,16 +51,18 @@ def update_row():
 
 # Как по другому создавать таблицу из клиента?
 # Может редактирование схемы не должно быть в этом интерфейсе?
-@post("/create_table")
+
 def create_table():
-    table_name = request.json['table_name']
-    columns = request.json['columns']
+    table_name = "article_data_images"
+    columns = (('title', 'TEXT', ('NOT NULL',)),
+                ('date', 'TEXT', ('NOT NULL',)),
+                ('link', 'TEXT', ('PRIMARY KEY', 'NOT NULL')),
+                ('src', 'TEXT', ('NOT NULL',)),
+                ('base64', 'BLOB', ('NOT NULL',)))
     context.get_instance().CreateTable(table_name, columns)
 
-
-r = get_by_id(1)
-
 try:
+    create_table()
     run()
 except:
     context.get_instance().Disconnect()
