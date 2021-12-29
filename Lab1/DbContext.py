@@ -1,4 +1,3 @@
-import sys
 import os
 import sqlite3
 
@@ -10,7 +9,7 @@ class DbContext:
         self.uri = uri
         self.connection = None
 
-        # Если есть схема, подкключиться
+        # Если есть схема, подключиться
         if os.path.isfile(uri):
             self.connection = sqlite3.connect(uri)
         # Если нет, создать
@@ -21,7 +20,6 @@ class DbContext:
         self.schema = uri[:-3]
         self.path = uri
         self.cursor = self.connection.cursor()
-        #self.tables = dict()
 
     #Создание таблички
     def CreateTable(self, table_name : str, columns : tuple):
@@ -38,10 +36,12 @@ class DbContext:
         self.connection.execute(query, data_tuple)
         self.connection.commit()
 
+    # Truncate Script
     def Truncate(self, table_name: str):
         query = f"DELETE FROM {table_name}"
         self.connection.execute(query)
         self.connection.commit()
 
+    #Disconect
     def Disconnect(self):
         self.cursor.close()

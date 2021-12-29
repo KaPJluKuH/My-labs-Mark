@@ -1,9 +1,7 @@
 import requests
 from bs4 import BeautifulSoup as BS
 import base64
-import sqlite3
 import DbContext
-import json
 
 
 def save(comp):
@@ -36,7 +34,6 @@ def parseImgs():
 
         comps = []
 
-
         for game in games:
             comps.append({
                 'title': game.find('div', class_='caption caption-bold').get_text(strip=True),
@@ -49,17 +46,15 @@ def parseImgs():
             print(f"page{i - 1} {comp['title']} -> Date:{comp['date']} -> link:{comp['link']}")
             response = requests.get(comp['src'])
             b64img = base64.b64encode(response.content)
-            comp.update({'base64' : b64img})
+            comp.update({'base64': b64img})
 
         allComps += comps
 
     return allComps
 
 
-
-#создание схемы данных
+# создание схемы данных
 context = DbContext.DbContext("parserDbTest.db")
-
 
 context.CreateTable("article_data_images", (('title', 'TEXT', ('NOT NULL',)),
                                             ('date', 'TEXT', ('NOT NULL',)),
@@ -72,7 +67,7 @@ print(f"{len(data)} read")
 
 values = [(d['title'], d['date'], d['link'], d['src'], d['base64']) for d in data]
 columns = ('title', 'date', 'link', 'src', 'base64')
-#Привод данных к заполнению
+# Привод данных к заполнению
 context.Truncate("article_data_images")
 for v in values:
     context.Insert("article_data_images", columns, v)
