@@ -45,7 +45,7 @@ default_kb_markup = ReplyKeyboardMarkup(
 
 @dp.message_handler(commands=[START_BUTTON_NAME])
 async def send_welcome(message: types.Message):
-    await message.reply("Hi!\nChoose operation", reply_markup=default_kb_markup)
+    await message.reply("Привет!\nChoose operation", reply_markup=default_kb_markup)
 
 
 
@@ -58,17 +58,19 @@ async def origin_select_btn_handler(message: types.Message):
             [KeyboardButton(text="Искать по нескольким id")]
         ]
     )
-    await message.reply(text="Choose select query type", reply_markup=select_kb_markup)
+    await message.reply(text="Выберите какой тип поиска вас интересует", reply_markup=select_kb_markup)
 
-@dp.message_handler(lambda message: message.text == SELECT_BUTTON_NAME)
-async def origin_select_btn_handler(message: types.Message):
-    select_kb_markup = ReplyKeyboardMarkup(
-        [
-            [KeyboardButton(text="Искать по одному id")],
-            [KeyboardButton(text="Искать по нескольким id")]
-        ]
-    )
-    await message.reply(text="Choose select query type", reply_markup=select_kb_markup)
+
+@dp.message_handler(lambda message: message.text == "Искать по одному id")
+async def origin_answer_get_btn_handler(message: types.Message):
+    await message.reply(text="Введите id")
+    if lambda sms: sms.text == int:
+        await message.reply(text="Ваш id принят")
+# @dp.message_handler(lambda message: message.text == "Искать по нескольким id")
+# async def origin_select_btn_handler(message: types.Message):
+#
+#     await message.reply(text="Ваш запрос выдан") and json.dumps(res)
+
 
 @dp.message_handler(commands=[GET_BUTTON_NAME])
 async def origin_get_btn_handler(message: types.Message):
@@ -76,7 +78,12 @@ async def origin_get_btn_handler(message: types.Message):
     m = re.sub("/" + GET_BUTTON_NAME, "", m)
     m = m.strip()
     result = CrudApi.get_by_id(int(m))
-    await message.reply(result)
+    for res in result:
+        title = res[0]
+        data = res[1]
+        link = res[2]
+        bs64 = res[3]
+        await message.reply(title+'\n'+data+'\n'+link+'\n'+bs64)
 
 
 @dp.message_handler(commands=[SELECT_RANGE_NAME])
