@@ -21,7 +21,7 @@ def parseImgs():
         }
         response = requests.get(URL, headers=HEADERS)
 
-        # проверка на статус ответа ссервера
+        # проверка на статус ответа сервера
         if response.status_code != 200:
             break
 
