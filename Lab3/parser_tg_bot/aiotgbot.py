@@ -58,14 +58,15 @@ async def origin_select_btn_handler(message: types.Message):
             [KeyboardButton(text="Искать по нескольким id")]
         ]
     )
-    await message.reply(text="Выберите какой тип поиска вас интересует", reply_markup=select_kb_markup)
+    await message.reply(text="Выберите какой тип поиска вас интересует:", reply_markup=select_kb_markup)
 
 
 @dp.message_handler(lambda message: message.text == "Искать по одному id")
 async def origin_answer_get_btn_handler(message: types.Message):
-    await message.reply(text="Введите id")
-    if lambda sms: sms.text == int:
-        await message.reply(text="Ваш id принят")
+    await message.reply(text="Введите id", reply=False)
+    answer = await bot.await_answer()
+
+
 # @dp.message_handler(lambda message: message.text == "Искать по нескольким id")
 # async def origin_select_btn_handler(message: types.Message):
 #
