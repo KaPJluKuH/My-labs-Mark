@@ -16,7 +16,7 @@ def get_by_id(id):
 def select_by_id():
     ids = request.json['ids']
     predicate = "1=1" if len(ids) == 0 else f"rowid in ({','.join(ids)})"
-    print(predicate)
+    # print(predicate)
     return json.dumps(context.get_instance().Select("article_data_images", predicate))
 
 

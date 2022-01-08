@@ -34,11 +34,15 @@ class CrudApi:
             json_res = {"status": "ERROR"}
         return json.dumps(json_res)
 
-    # @staticmethod
-    # def insert_one():
-    #     if:
-    #         json_res = {"status": "Oki"}
-    #     else:
+    @staticmethod
+    def insert_row(users: [str]):
+        # print("63: ->", users)
+        cols = ["title", "date", "link", "src", "base64"]
+        response = requests.post(url + "create", json={"columns": cols, "values": users})
+        # print(response)
+        # print(len(users))
+        return response.status_code
     #
-    #     return json.dumps(json_res)
-
+    # @staticmethod
+    # def update_row():
+    #     return

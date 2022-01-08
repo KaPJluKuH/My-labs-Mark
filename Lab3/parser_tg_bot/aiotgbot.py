@@ -28,7 +28,7 @@ TRUNCATE_BUTTON_NAME = "Truncate"
 # DELETE_BY_ID = "Delete by id"
 
 UPDATE_BUTTON_NAME = "Update"
-INSERT_BUTTON_NAME = "Insert"
+INSERT_BUTTON_NAME = "insert_row"
 ###
 
 default_kb_markup = ReplyKeyboardMarkup(
@@ -61,10 +61,10 @@ async def origin_select_btn_handler(message: types.Message):
     await message.reply(text="Выберите какой тип поиска вас интересует:", reply_markup=select_kb_markup)
 
 
-@dp.message_handler(lambda message: message.text == "Искать по одному id")
-async def origin_answer_get_btn_handler(message: types.Message):
-    await message.reply(text="Введите id", reply=False)
-    answer = await bot.await_answer()
+# @dp.message_handler(lambda message: message.text == "Искать по одному id")
+# async def origin_answer_get_btn_handler(message: types.Message):
+#     await message.reply(text="Введите id", reply=False)
+
 
 
 # @dp.message_handler(lambda message: message.text == "Искать по нескольким id")
@@ -110,6 +110,19 @@ async def origin_delete_btn_handler(message: types.Message):
     result = json.loads(result)
     await message.reply(result.get('status'))
 
+
+@dp.message_handler(commands=[INSERT_BUTTON_NAME])
+async def origin_insert_btn_handler(message: types.Message):
+    m = message.text.strip()
+    # print(m)
+    m = re.sub("/" + INSERT_BUTTON_NAME, "", m)
+    # print(m)
+    m = m.strip()
+    # print(m)
+    result = CrudApi.insert_row(m.split(","))
+    # print(result)
+    await message.reply("Ваша сзапись добавлена в базу. Найти её вы можете через поиск по последнему id.")
+
 # @dp.message_handler()
 # async def echo(message: types.Message):
 #     await message.answer(text="Press start",
@@ -121,12 +134,6 @@ async def origin_delete_btn_handler(message: types.Message):
 @dp.message_handler(commands=[UPDATE_BUTTON_NAME])
 async def origin_update_btn_handler(message: types.Message):
     pass
-
-
-@dp.message_handler(commands=[INSERT_BUTTON_NAME])
-async def origin_insert_btn_handler(message: types.Message):
-    pass
-
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
