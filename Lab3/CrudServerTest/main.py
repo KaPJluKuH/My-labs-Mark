@@ -47,7 +47,9 @@ def update_row():
     cols = request.json['columns']
     vals = request.json['values']
     predicate = request.json['predicate']
+    print(predicate, cols, vals)
     context.get_instance().Update("article_data_images", cols, vals, predicate, download)
+
 
 
 # Как по другому создавать таблицу из клиента?

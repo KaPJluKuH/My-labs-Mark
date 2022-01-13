@@ -52,22 +52,23 @@ def parseImgs():
     return allComps
 
 
-requests.post("http://127.0.0.1:8080/create_table", json={"columns": [["title", "TEXT", ["NOT NULL", ]],
-                                                                            ["date", "TEXT", ["NOT NULL", ]],
-                                                                            ["link", "TEXT",
-                                                                             ["PRIMARY KEY", "NOT NULL"]],
-                                                                            ["src", "TEXT", ["NOT NULL", ]],
-                                                                            ["base64", "BLOB", ["NOT NULL", ]]],
-                                                                "table_name": "article_data_images"})
+def main_parser():
+    requests.post("http://127.0.0.1:8080/create_table", json={"columns": [["title", "TEXT", ["NOT NULL", ]],
+                                                                                ["date", "TEXT", ["NOT NULL", ]],
+                                                                                ["link", "TEXT",
+                                                                                 ["PRIMARY KEY", "NOT NULL"]],
+                                                                                ["src", "TEXT", ["NOT NULL", ]],
+                                                                                ["base64", "BLOB", ["NOT NULL", ]]],
+                                                                    "table_name": "article_data_images"})
 
-requests.post("http://127.0.0.1:8080/truncate", json={"table_name": "article_data_images"})
+    requests.post("http://127.0.0.1:8080/truncate", json={"table_name": "article_data_images"})
 
-data = parseImgs()
-print(f"{len(data)} read")
+    data = parseImgs()
+    print(f"{len(data)} read")
 
-values = [(d['title'], d['date'], d['link'], d['src'], d['base64']) for d in data]
-columns = ['title', 'date', 'link', 'src', 'base64']
-# Привод данных к заполнению
-for v in values:
-    requests.post("http://127.0.0.1:8080/create", json={"columns": columns, "values": v},
-                  params={"download":"true"})
+    values = [(d['title'], d['date'], d['link'], d['src'], d['base64']) for d in data]
+    columns = ['title', 'date', 'link', 'src', 'base64']
+    # Привод данных к заполнению
+    for v in values:
+        requests.post("http://127.0.0.1:8080/create", json={"columns": columns, "values": v},
+                      params={"download":"true"})

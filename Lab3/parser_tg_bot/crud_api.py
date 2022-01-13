@@ -42,7 +42,10 @@ class CrudApi:
         # print(response)
         # print(len(users))
         return response.status_code
-    #
-    # @staticmethod
-    # def update_row():
-    #     return
+
+    @staticmethod
+    def update_row(id: int, cols: [str], vals: [str]):
+        print(id, cols, vals)
+        response = requests.post(url + "update", json={"columns": cols, "values": vals, "predicate": f"rowid = {id}", "download": True})
+        print(response)
+        return response.status_code

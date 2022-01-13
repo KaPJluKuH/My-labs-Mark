@@ -57,11 +57,11 @@ class DbContext:
         if download:
             download_if_needed(columns, values)
 
-        update_str = "SET " + ",".join([f"{field} = {value}" for field, value in zip(columns, values)])
+        update_str = "SET " + ",".join([f"{field} = '{value}'" for field, value in zip(columns, values)])
         query = f"UPDATE {table_name} {update_str} WHERE {predicate}"
         self.connection.execute(query)
         self.connection.commit()
-
+        # UPDATE aricle_dddd set title = 'DARK SOULS III'
     def Disconnect(self):
         self.cursor.close()
 
@@ -75,7 +75,7 @@ class DbContext:
 
 
 def download_if_needed(columns: list, values: list):
-    if "base64" in columns and "src" in "columns":
+    if "base64" in columns and "src" in columns:
         src_idx = columns.index("src")
         b64_idx = columns.index("base64")
 

@@ -5,6 +5,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import *
 import re
 import json
+from Lab3.StopGameParser import parser
 
 logging.basicConfig(level=logging.INFO)
 
@@ -27,8 +28,9 @@ DELETE_RANGE_NAME = "delete_range"
 TRUNCATE_BUTTON_NAME = "Truncate"
 # DELETE_BY_ID = "Delete by id"
 
-UPDATE_BUTTON_NAME = "Update"
+UPDATE_BUTTON_NAME = "update_row"
 INSERT_BUTTON_NAME = "insert_row"
+
 ###
 
 default_kb_markup = ReplyKeyboardMarkup(
@@ -47,6 +49,11 @@ default_kb_markup = ReplyKeyboardMarkup(
 async def send_welcome(message: types.Message):
     await message.reply("Привет!\nChoose operation", reply_markup=default_kb_markup)
 
+
+@dp.message_handler(lambda message: message.text == RUN_PARSE_BUTTON_NAME)
+async def origin_parse_handler(message: types.Message):
+    parser.main_parser()
+    await message.reply("Парсинг выполнен!")
 
 
 # select handlers
@@ -123,6 +130,18 @@ async def origin_insert_btn_handler(message: types.Message):
     # print(result)
     await message.reply("Ваша сзапись добавлена в базу. Найти её вы можете через поиск по последнему id.")
 
+
+@dp.message_handler(commands=[UPDATE_BUTTON_NAME])
+async def origin_update_btn_handler(message: types.Message):
+    m = message.text.strip()
+    #/update_row  456 $ title,data $ DARKSOULS III,2017
+    m = re.sub("/" + UPDATE_BUTTON_NAME, "", m)
+    m = m.split('$')
+    id = m[0].strip()
+    cols = m[1].strip().split(",")
+    vals = m[2].strip().split(",")
+    result = CrudApi.update_row(id, cols, vals)
+    await message.reply("Запись в таблице обновлена. Можете проверить через поиск по id строки.")
 # @dp.message_handler()
 # async def echo(message: types.Message):
 #     await message.answer(text="Press start",
@@ -130,10 +149,6 @@ async def origin_insert_btn_handler(message: types.Message):
 #                              [KeyboardButton(text="/start")]
 #                          ]))
 
-
-@dp.message_handler(commands=[UPDATE_BUTTON_NAME])
-async def origin_update_btn_handler(message: types.Message):
-    pass
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
