@@ -1,11 +1,17 @@
 import logging
 
+import asyncio
+
+from aiogram.dispatcher.filters import state
+
 from crud_api import CrudApi
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import *
 import re
 import json
 from Lab3.StopGameParser import parser
+
+from aiogram.dispatcher import FSMContext
 
 logging.basicConfig(level=logging.INFO)
 
@@ -31,7 +37,9 @@ TRUNCATE_BUTTON_NAME = "Truncate"
 UPDATE_BUTTON_NAME = "update_row"
 INSERT_BUTTON_NAME = "insert_row"
 
-###
+### перехваты
+SELECT_BUTTON_NAME_GET = "Искать по одному id"
+SELECT_BUTTON_NAME_MANY = "Искать по нескольким id"
 
 default_kb_markup = ReplyKeyboardMarkup(
     [
@@ -41,19 +49,20 @@ default_kb_markup = ReplyKeyboardMarkup(
         # [KeyboardButton(text=DELETE_BUTTON_NAME)],  # by id/ by range/ truncate
         [KeyboardButton(text=UPDATE_BUTTON_NAME)],
         [KeyboardButton(text=INSERT_BUTTON_NAME)]
-    ]
+    ], resize_keyboard=True
 )
+
 
 
 @dp.message_handler(commands=[START_BUTTON_NAME])
 async def send_welcome(message: types.Message):
     await message.reply("Привет!\nChoose operation", reply_markup=default_kb_markup)
 
-
-@dp.message_handler(lambda message: message.text == RUN_PARSE_BUTTON_NAME)
-async def origin_parse_handler(message: types.Message):
-    parser.main_parser()
-    await message.reply("Парсинг выполнен!")
+#
+# @dp.message_handler(lambda message: message.text == RUN_PARSE_BUTTON_NAME)
+# async def origin_parse_handler(message: types.Message):
+#     parser.main_parser()
+#     await message.reply("Парсинг выполнен!")
 
 
 # select handlers
@@ -61,24 +70,30 @@ async def origin_parse_handler(message: types.Message):
 async def origin_select_btn_handler(message: types.Message):
     select_kb_markup = ReplyKeyboardMarkup(
         [
-            [KeyboardButton(text="Искать по одному id")],
-            [KeyboardButton(text="Искать по нескольким id")]
-        ]
+            [KeyboardButton(text=SELECT_BUTTON_NAME_GET),
+            KeyboardButton(text=SELECT_BUTTON_NAME_MANY)]
+        ], resize_keyboard=True
     )
     await message.reply(text="Выберите какой тип поиска вас интересует:", reply_markup=select_kb_markup)
 
 
-# @dp.message_handler(lambda message: message.text == "Искать по одному id")
-# async def origin_answer_get_btn_handler(message: types.Message):
-#     await message.reply(text="Введите id", reply=False)
-
-
-
-# @dp.message_handler(lambda message: message.text == "Искать по нескольким id")
-# async def origin_select_btn_handler(message: types.Message):
-#
-#     await message.reply(text="Ваш запрос выдан") and json.dumps(res)
-
+@dp.message_handler(lambda message: message.text == SELECT_BUTTON_NAME_GET)
+async def catch_id_get(message: types.Message, state: FSMContext):
+    await message.answer(text="Введите id по которому хотите найти запись в базе:")
+    await asyncio.sleep(15)
+    try:
+        data = await state.get_data()
+        if data['get_name'] == 'true':
+            pass
+    except KeyError:
+        # Если пользователь не ответил или за это время state завершился, получаем KeyError
+        await message.answer(f'Жаль, что ты не ответил')
+        await state.finish()
+    await state.update_data(get_name='true')
+    await message.answer(f'Ваш id: {message.text}')
+# @dp.message_handler(lambda message: message.text == SELECT_BUTTON_NAME_MANY)
+# async def
+#     await
 
 @dp.message_handler(commands=[GET_BUTTON_NAME])
 async def origin_get_btn_handler(message: types.Message):
@@ -121,13 +136,9 @@ async def origin_delete_btn_handler(message: types.Message):
 @dp.message_handler(commands=[INSERT_BUTTON_NAME])
 async def origin_insert_btn_handler(message: types.Message):
     m = message.text.strip()
-    # print(m)
     m = re.sub("/" + INSERT_BUTTON_NAME, "", m)
-    # print(m)
     m = m.strip()
-    # print(m)
     result = CrudApi.insert_row(m.split(","))
-    # print(result)
     await message.reply("Ваша сзапись добавлена в базу. Найти её вы можете через поиск по последнему id.")
 
 
@@ -142,12 +153,6 @@ async def origin_update_btn_handler(message: types.Message):
     vals = m[2].strip().split(",")
     result = CrudApi.update_row(id, cols, vals)
     await message.reply("Запись в таблице обновлена. Можете проверить через поиск по id строки.")
-# @dp.message_handler()
-# async def echo(message: types.Message):
-#     await message.answer(text="Press start",
-#                          reply_markup=ReplyKeyboardMarkup(keyboard=[
-#                              [KeyboardButton(text="/start")]
-#                          ]))
 
 
 if __name__ == '__main__':
