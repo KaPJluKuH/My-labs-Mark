@@ -29,9 +29,9 @@ class CrudApi:
         response = requests.post(url + "delete_by_id", json={"ids": ids})
         # print(response)
         if response.ok:
-            json_res = {"status": "Oki"}
+            json_res = {"status": "Запись в таблице удалена."}
         else:
-            json_res = {"status": "ERROR"}
+            json_res = {"status": "Невозможно удалить запись."}
         return json.dumps(json_res)
 
     @staticmethod

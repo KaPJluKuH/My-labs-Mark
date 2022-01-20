@@ -1,9 +1,8 @@
-import requests
 from bs4 import BeautifulSoup as BS
-import base64
 import requests
-import json
 
+# import json
+# import base64
 
 def save(comp):
     with open('games_parse.txt', 'a') as file:
@@ -21,7 +20,7 @@ def parseImgs():
         }
         response = requests.get(URL, headers=HEADERS)
 
-        # проверка на статус ответа ссервера
+        # проверка на статус ответа сервера
         if response.status_code != 200:
             break
 
@@ -50,7 +49,6 @@ def parseImgs():
         allComps += comps
 
     return allComps
-
 
 def main_parser():
     requests.post("http://127.0.0.1:8080/create_table", json={"columns": [["title", "TEXT", ["NOT NULL", ]],

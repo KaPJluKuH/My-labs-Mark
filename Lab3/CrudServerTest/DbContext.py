@@ -1,10 +1,10 @@
 import base64
-import sys
 import os
 import sqlite3
-import psutil
 import requests
 
+# import sys
+# import psutil
 
 class DbContext:
     # .ctor
@@ -75,7 +75,7 @@ class DbContext:
 
 
 def download_if_needed(columns: list, values: list):
-    if "base64" in columns and "src" in columns:
+    if "base64" in columns and "src" in "columns":
         src_idx = columns.index("src")
         b64_idx = columns.index("base64")
 
