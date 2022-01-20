@@ -1,8 +1,7 @@
 from bs4 import BeautifulSoup as BS
 import requests
-
-# import json
-# import base64
+import json
+import base64
 
 def save(comp):
     with open('games_parse.txt', 'a') as file:

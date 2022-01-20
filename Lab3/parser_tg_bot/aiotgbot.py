@@ -1,9 +1,5 @@
 import logging
 
-# import asyncio
-#
-# from aiogram.dispatcher.filters import state
-
 from crud_api import CrudApi
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import *
@@ -106,8 +102,8 @@ async def process_message_get(message: types.Message, state: FSMContext):
             data = res[1]
             link = res[2]
             bs64 = res[3]
-            await message.reply(title + '\n' + data + '\n' + link + '\n' + bs64)
-
+            await message.reply(title + '\n' + data + '\n' + link + '\n' + bs64, reply_markup=default_kb_markup)
+        # await message.reply("Время сделать еще выбор!", reply_markup=default_kb_markup)
     await state.finish()
 
 
@@ -129,8 +125,8 @@ async def process_message_select(message: types.Message, state: FSMContext):
             data = res[1]
             link = res[2]
             bs64 = res[3]
-            await message.reply(title + '\n' + data + '\n' + link + '\n' + bs64)
-
+            await message.reply(title + '\n' + data + '\n' + link + '\n' + bs64, reply_markup=default_kb_markup)
+        # await message.reply("Время сделать еще выбор!", reply_markup=default_kb_markup)
     await state.finish()
 
 

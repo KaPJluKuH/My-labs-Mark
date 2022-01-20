@@ -51,9 +51,6 @@ def update_row():
     context.get_instance().Update("article_data_images", cols, vals, predicate, download)
 
 
-
-# Как по другому создавать таблицу из клиента?
-# Может редактирование схемы не должно быть в этом интерфейсе?
 def create_table():
     table_name = "article_data_images"
     columns = (('title', 'TEXT', ('NOT NULL',)),
